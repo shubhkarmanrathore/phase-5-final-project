@@ -11,6 +11,8 @@ flask-sqlalchemy = "*"
 importlib-metadata = "*"
 ipdb = "*"
 sqlalchemy-serializer = "*"
+flask-restful = "*"
+flask-bcrypt = "*"
 
 [dev-packages]
 
