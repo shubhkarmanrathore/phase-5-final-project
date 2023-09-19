@@ -43,6 +43,9 @@ class Cart(db.Model, SerializerMixin):
     product_image = db.Column(db.String, nullable=False)
     user_id = db.Column(db.String, nullable=False)
 
+    def __repr__(self):
+        return f"<Cart Item - {self.product_name}>"
+
 class Order(db.Model, SerializerMixin):
     __tablename__ = 'orders'
     
