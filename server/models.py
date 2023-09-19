@@ -15,6 +15,10 @@ class User(db.Model, SerializerMixin):
     phone_number = db.Column(db.String(10), unique = True, nullable=False)
     payment_card = db.Column(db.String(16), nullable=False)
 
+    reviews = db.relationship("Review", back_populates="users")
+    orders = db.relationship("Order", back_populates="users")
+    cart = db.relationship("Cart", back_populates="users")
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -28,6 +32,9 @@ class Product(db.Model, SerializerMixin):
     category = db.Column(db.String, nullable=False)
     image = db.Column(db.String, nullable=False)
     rating = db.Column(db.String, nullable=False)
+
+    reviews = db.relationship("Review", back_populates="products")
+    cart = db.relationship("Cart", back_populates="products")
 
     def __repr__(self):
         return f"<Product {self.title}>"
@@ -43,6 +50,9 @@ class Cart(db.Model, SerializerMixin):
     product_image = db.Column(db.String, nullable=False)
     user_id = db.Column(db.String, nullable=False)
 
+    products = db.relationship("Product", back_populates="cart")
+    users = db.relationship("User", back_populates="cart")
+
     def __repr__(self):
         return f"<Cart Item - {self.product_name}>"
 
@@ -55,7 +65,9 @@ class Order(db.Model, SerializerMixin):
     product_quantity = db.Column(db.Integer, nullable=False)
     order_date = db.Column(db.String, nullable=False)
     order_status = db.Column(db.String, nullable=False)
-    user_id = db.Column(db.String, db.ForeinKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    user = db.relationship("User", back_populates="order_history")
 
 def __repr__(self):
         return f"<Order ID: {self.id}>"
@@ -70,8 +82,8 @@ class Review(db.Model, SerializerMixin):
     rating = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.String, nullable=False)
 
-    product = db.relationship("Product", back_populates = "reviews")
-    user = db.relationship("User", back_populates = "reviews")
+    products = db.relationship("Product", back_populates = "reviews")
+    users = db.relationship("User", back_populates = "reviews")
 
     def __repr__(self):
         return f"<Review by User ID: {self.user_id} for Product ID: {self.product_id}>"
