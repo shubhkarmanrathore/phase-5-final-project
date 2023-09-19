@@ -72,3 +72,6 @@ class Review(db.Model, SerializerMixin):
 
     product = db.relationship("Product", back_populates = "reviews")
     user = db.relationship("User", back_populates = "reviews")
+
+    def __repr__(self):
+        return f"<Review by User ID: {self.user_id} for Product ID: {self.product_id}>"
