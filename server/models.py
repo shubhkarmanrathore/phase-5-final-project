@@ -57,7 +57,8 @@ class Order(db.Model, SerializerMixin):
     order_status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.String, db.ForeinKey('users.id'))
 
-
+def __repr__(self):
+        return f"<Order ID: {self.id}>"
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
