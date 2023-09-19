@@ -29,6 +29,9 @@ class Product(db.Model, SerializerMixin):
     image = db.Column(db.String, nullable=False)
     rating = db.Column(db.String, nullable=False)
 
+    def __repr__(self):
+        return f"<Product {self.title}>"
+
 class Cart(db.Model, SerializerMixin):
     __tablename__ = 'cart'
     
