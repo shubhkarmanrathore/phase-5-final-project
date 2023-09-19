@@ -15,6 +15,9 @@ class User(db.Model, SerializerMixin):
     phone_number = db.Column(db.String(10), unique = True, nullable=False)
     payment_card = db.Column(db.String(16), nullable=False)
 
+    def __repr__(self):
+        return f"<User {self.username}>"
+
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
     
@@ -48,7 +51,7 @@ class Order(db.Model, SerializerMixin):
     order_status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.String, db.ForeinKey('users.id'))
 
-        
+
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
