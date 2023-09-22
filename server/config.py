@@ -18,7 +18,11 @@ db = SQLAlchemy(metadata=metadata)
 
 migrate = Migrate(app, db)
 db.init_app(app)
+migrate.init_app(app, db)
 
 bcrypt = Bcrypt(app)
+bcrypt.init_app(app)
 
 api = Api(app)
+
+from models import *
