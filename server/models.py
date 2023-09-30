@@ -21,6 +21,17 @@ class User(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<User {self.username}>"
+    
+    # @hybrid_property
+    # def password_hash(self):
+    #     return self.password_hash
+    
+    # @password_hash.setter
+    # def password_hash(self, password):
+    #     self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # def password_check(self, password):
+    #     return bcrypt.check_password_hash(self.password_hash, password)
 
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
