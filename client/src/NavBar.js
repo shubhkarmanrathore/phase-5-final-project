@@ -21,11 +21,11 @@ function NavBar() {
   return (
     <Navbar bg="body-tertiary" expand="lg">
       <div className="container-fluid">
-        <Navbar.Brand href="#">Website</Navbar.Brand>
+      <NavLink to="/" className="navbar-brand">Website</NavLink>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-          <NavLink to="/" className="nav-link" activeClassName="active">Home</NavLink>
+          {/* <NavLink to="/" className="nav-link" activeClassName="active">Home</NavLink> */}
             <NavLink to="/signin" className="nav-link">Sign In</NavLink>
             <NavDropdown title="Options" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#">Orders</NavDropdown.Item>
