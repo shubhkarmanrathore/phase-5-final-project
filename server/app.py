@@ -43,16 +43,10 @@ class Product_By_Id(Resource):
         else:
             return make_response({'message': 'Product cannot be found.'})
 
-api.add_resource(Product_By_Id, "/products/<int:id>")
+api.add_resource(Product_By_Id, "/product/<int:id>")
 
 
 class Users(Resource):
-
-    # def get(self):
-    #     users = User.query.all()
-    #     user_dict = [user.to_dict for user in users]
-    #     user_response = {'user': user_dict}
-    #     return make_response(jsonify(user_response), 200)
 
     def get(self):
         users = User.query.all()
@@ -120,7 +114,7 @@ class User_By_Id(Resource):
             db.session.rollback()
             return make_response({'message': 'Error occurred', 'error': str(e)}, 500)
 
-api.add_resource(User_By_Id, '/users/<int:user_id>')
+api.add_resource(User_By_Id, '/users/<int:id>')
 
 @app.route("/signin", methods=["POST"])
 def signin():

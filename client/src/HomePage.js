@@ -8,7 +8,6 @@ function HomePage() {
     fetch('/products')
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         setProducts(data);
       });
   }, []);
