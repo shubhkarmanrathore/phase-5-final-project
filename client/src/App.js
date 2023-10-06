@@ -6,6 +6,7 @@ import SignIn from './SignIn'
 import Cart from './Cart'
 import { Switch, Route } from 'react-router-dom';
 import SignUp from './SignUp';
+import Checkout from './Checkout';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/signin"><SignIn/></Route>
         <Route path="/signup"><SignUp/></Route>
         <Route path="/cart"><Cart/></Route>
+        <Route path="/checkout"><Checkout/></Route>
       </Switch>
     </div>
   );

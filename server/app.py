@@ -1,7 +1,7 @@
 from flask import Flask, make_response, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Resource
-from models import Product, User
+from flask_restful import Resource, reqparse
+from models import Product, User, Cart, Review
 from config import app, db, api
 
 
@@ -115,6 +115,126 @@ class User_By_Id(Resource):
             return make_response({'message': 'Error occurred', 'error': str(e)}, 500)
 
 api.add_resource(User_By_Id, '/users/<int:id>')
+
+def check_login(func):
+    def wrapper(*args, **kwargs):
+        if not session.get("user_id"):
+            return make_response(jsonify({"message": "Not logged in"}), 401)
+        return func(*args, **kwargs)
+    return wrapper
+
+class Cart_Resource(Resource):
+    @check_login
+    def get(self):
+        try:
+            user_id = session.get("user_id")
+            cart_products = Cart.query.filter_by(user_id=user_id).all()
+            cart_products_list = [product.to_dict() for product in cart_products]
+
+            return make_response(jsonify({"cart_items": cart_products_list}), 200)
+        except Exception as e:
+            return make_response(jsonify({"error": str(e)}), 500)
+
+api.add_resource(Cart_Resource, "/cart/user")
+
+class Cart_Product(Resource):
+    @check_login
+    def post(self, product_id):
+       user_id = session.get("user_id")
+       product_quantity = request.json.get("quantity", 1)
+       product = Product.query.get(product_id)
+
+       if product:
+           new_cart_product = Cart(user_id=user_id, product_id=product_id, product_quantity=product_quantity)
+
+           db.session.add(new_cart_product)
+           db.session.commit()
+
+           return make_response(jsonify({"message": "Product added to cart"}), 201)
+       else:
+            return make_response(jsonify({"message": "Product not found"}), 404)
+
+
+api.add_resource(Cart_Product, "/cart/products/<int:product_id>")
+
+class Cart_Product_By_Id(Resource):
+    @check_login
+    def delete(self, cart_product_id):
+        try:
+            user_id = session.get("user_id")
+            cart_product = Cart.query.filter_by(id=cart_product_id, user_id=user_id).first()
+
+            if cart_product:
+                db.session.delete(cart_product)
+                db.session.commit()
+                return make_response(jsonify({"message": "Cart item removed successfully"}), 200)
+            else:
+                return make_response(jsonify({"message": "Cart item not found"}), 404)
+        except Exception as e:
+            return make_response(jsonify({"error": str(e)}), 500)
+
+    @check_login
+    def patch(self, cart_product_id):
+        try:
+            user_id = session.get("user_id")
+            cart_product = Cart.query.filter_by(id=cart_product_id, user_id=user_id).first()
+
+            if cart_product:
+                parser = reqparse.RequestParser()
+                parser.add_argument('quantity', type=int, required=True)
+                data = parser.parse_args()
+
+                new_quantity = data['quantity']
+
+                cart_product.product_quantity = new_quantity
+                db.session.commit()
+
+                return make_response(jsonify({"message": "Cart item quantity updated successfully"}), 200)
+            else:
+                return make_response(jsonify({"message": "Cart item not found"}), 404)
+        except Exception as e:
+            return make_response(jsonify({"error": str(e)}), 500)
+
+api.add_resource(Cart_Product_By_Id, "/cart/products/<int:cart_product_id>")
+
+class ProductReviews(Resource):
+    @check_login
+    def post(self, product_id):
+        data = request.get_json()
+        user_id = session.get("user_id")
+
+        try:
+            title = data.get("title")
+            body = data.get("body")
+            rating = data.get("rating")
+
+            review = Review(
+                title=title,
+                body=body,
+                rating=rating,
+                user_id=user_id,
+                product_id=product_id,
+            )
+
+            db.session.add(review)
+            db.session.commit()
+
+            return make_response({'message': 'Review added successfully'}, 201)
+        except Exception as e:
+            db.session.rollback()
+            return make_response({'message': 'Error occurred', 'error': str(e)}, 500)
+
+    def get(self, product_id):
+        reviews = Review.query.filter_by(product_id=product_id).all()
+        review_list = []
+
+        for review in reviews:
+            review_dict = review.to_dict()
+            review_list.append(review_dict)
+
+        return make_response(jsonify(review_list), 200)
+
+api.add_resource(ProductReviews, '/product/<int:product_id>/reviews')
 
 @app.route("/signin", methods=["POST"])
 def signin():

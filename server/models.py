@@ -5,6 +5,17 @@ from config import db, bcrypt
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
+
+    serialize_only = (
+        "reviews.body",
+        "reviews.rating",
+        # "order.id",
+        "cart.id",
+        "name",
+        "address",
+        "payment_card",
+        "id",
+    )
     
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable=False)
@@ -18,6 +29,12 @@ class User(db.Model, SerializerMixin):
     reviews = db.relationship("Review", back_populates="user")
     orders = db.relationship("Order", back_populates="user")
     cart = db.relationship("Cart", back_populates="user")
+
+    serialize_rules = (
+    "-reviews.user",
+    "-orders.user",
+    "-cart.user",
+)
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -36,15 +53,22 @@ class User(db.Model, SerializerMixin):
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
     
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
     image = db.Column(db.String, nullable=False)
 
+    orders = db.relationship("Order", back_populates="product")
     reviews = db.relationship("Review", back_populates="product")
     cart = db.relationship("Cart", back_populates="product")
+
+    serialize_rules = (
+    "-reviews.product",
+    "-cart.product",
+    "-orders.product"
+)
 
     def __repr__(self):
         return f"<Product {self.title}>"
@@ -53,15 +77,18 @@ class Cart(db.Model, SerializerMixin):
     __tablename__ = 'cart'
     
     id = db.Column(db.Integer, primary_key = True)
-    product_name = db.Column(db.String, nullable=False)
     product_quantity = db.Column(db.Integer, nullable=False)
-    product_price = db.Column(db.Float, nullable=False)
-    product_image = db.Column(db.String, nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     product = db.relationship("Product", back_populates="cart")
     user = db.relationship("User", back_populates="cart")
+
+    serialize_rules = (
+        "-user.cart",
+        "-product.cart",
+
+    )
 
     def __repr__(self):
         return f"<Cart Item - {self.product_name}>"
@@ -69,23 +96,29 @@ class Cart(db.Model, SerializerMixin):
 class Order(db.Model, SerializerMixin):
     __tablename__ = 'orders'
     
-    id = db.Column(db.Integer, primary_key = True)
-    product_name = db.Column(db.String, nullable=False)
-    product_price = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
     product_quantity = db.Column(db.Integer, nullable=False)
     order_date = db.Column(db.String, nullable=False)
     order_status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
 
+    product = db.relationship("Product", back_populates="orders")
     user = db.relationship("User", back_populates="orders")
 
-def __repr__(self):
+    serialize_rules = (
+    "-user.orders",
+    "-product.orders"
+)
+
+    def __repr__(self):
         return f"<Order ID: {self.id}>"
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
     
     id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String, nullable=False)
     body = db.Column(db.String, nullable=False)
     rating = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -93,6 +126,13 @@ class Review(db.Model, SerializerMixin):
 
     product = db.relationship("Product", back_populates = "reviews")
     user = db.relationship("User", back_populates = "reviews")
+
+    serialize_rules = (
+    "-product.reviews",
+    "-user.reviews",
+    "user.username",
+    "user.id",
+)
 
     def __repr__(self):
         return f"<Review by User ID: {self.user_id} for Product ID: {self.product_id}>"
