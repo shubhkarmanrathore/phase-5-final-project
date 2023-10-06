@@ -244,7 +244,7 @@ def signin():
 
     user = User.query.filter_by(username = username).first()
 
-    if user:
+    if user and user.password_check(password):
         session["user_id"] = user.id
         return user.to_dict(), 200
     else:

@@ -20,7 +20,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String(25), unique = True, nullable=False)
-    password_hash = db.Column(db.String, nullable=False)
+    password= db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique = True, nullable=False)
     address = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String(10), unique = True, nullable=False)
@@ -39,16 +39,16 @@ class User(db.Model, SerializerMixin):
     def __repr__(self):
         return f"<User {self.username}>"
     
-    # @hybrid_property
-    # def password_hash(self):
-    #     return self.password_hash
+    @hybrid_property
+    def password_hash(self):
+        return self.password
     
-    # @password_hash.setter
-    # def password_hash(self, password):
-    #     self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    @password_hash.setter
+    def password_hash(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # def password_check(self, password):
-    #     return bcrypt.check_password_hash(self.password_hash, password)
+    def password_check(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
 class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'

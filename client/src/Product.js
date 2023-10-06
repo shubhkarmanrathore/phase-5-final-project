@@ -7,9 +7,9 @@ function Product() {
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [userReview, setUserReview] = useState({ title: '', body: '', rating: 0 });
+  const [addToCartMessage, setAddToCartMessage] = useState('');
 
   useEffect(() => {
-    // Fetch the product details
     fetch(`/product/${productId}`)
       .then((res) => {
         if (!res.ok) {
@@ -24,7 +24,6 @@ function Product() {
         console.error('Fetch error:', error);
       });
 
-    // Fetch the initial list of reviews
     fetch(`/product/${productId}/reviews`)
       .then((res) => res.json())
       .then((data) => {
@@ -41,11 +40,11 @@ function Product() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ quantity: 1 }), // Use 'quantity' here
+      body: JSON.stringify({ quantity: 1 }),
     })
       .then((response) => {
         if (response.status === 201) {
-          console.log(`Product ${productId} added to the cart.`);
+          setAddToCartMessage('Product added to cart.');
         } else {
           console.error('Failed to add product to cart.');
         }
@@ -58,7 +57,6 @@ function Product() {
   const isLoggedIn = true;
   const handleSubmitReview = () => {
     if (!isLoggedIn) {
-      // Redirect to the sign-in page if the user is not logged in
       history.push('/signin');
       return;
     }
@@ -107,6 +105,7 @@ function Product() {
           <button className="btn btn-primary" onClick={() => handleAddToCart(product.id)}>
             Add to Cart
           </button>
+          <p>{addToCartMessage}</p>
           <h2>Leave a Review</h2>
           <div className="mb-3">
             <label htmlFor="reviewTitle" className="form-label">Title:</label>
