@@ -29,21 +29,23 @@ function NavBar() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-            <NavLink to="/signin" className="nav-link">Sign In</NavLink>
-            <NavLink to="/cart" className="nav-link">
+            <Form className="d-flex" role="search">
+              <FormControl type="search" placeholder="Search" aria-label="Search" className="me-2" />
+              <Button variant="outline-success" type="submit">Search</Button>
+            </Form>
+          </Nav>
+            <Nav.Link as={NavLink} to="/signin" className="nav-link ms-2">Sign In</Nav.Link>
+          <Nav className="my-2 my-lg-0">
+            <Nav.Link as={NavLink} to="/cart" className="nav-link">
               <FontAwesomeIcon icon={faShoppingCart} />
-            </NavLink>
-            <NavDropdown title="Options" id="navbarScrollingDropdown">
-              <NavDropdown.Item href="#">Orders</NavDropdown.Item>
-              <NavDropdown.Item href="#">Settings</NavDropdown.Item>
+            </Nav.Link>
+            <NavDropdown title="Options" id="navbarScrollingDropdown" className="ms-2">
+              <NavDropdown.Item href="/my_orders">My Orders</NavDropdown.Item>
+              <NavDropdown.Item href="#">My Account</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleSignout} href="#">Sign Out</NavDropdown.Item>
+              <NavDropdown.Item onClick={handleSignout} style={{ paddingRight: '20px' }}>Sign Out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Form className="d-flex" role="search">
-            <FormControl type="search" placeholder="Search" aria-label="Search" className="me-2" />
-            <Button variant="outline-success" type="submit">Search</Button>
-          </Form>
         </Navbar.Collapse>
       </div>
     </Navbar>

@@ -16,7 +16,7 @@ function HomePage() {
     <div>
       <div className="row">
         {products.map((product) => (
-          <div key={product.id} className="col-md-3 mb-4"> {/* Use col-md-3 for 4 columns */}
+          <div key={product.id} className="col-md-3 mb-4">
             <div className="card h-100">
               <img
                 src={product.image}

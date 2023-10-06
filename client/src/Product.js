@@ -8,6 +8,7 @@ function Product() {
   const [reviews, setReviews] = useState([]);
   const [userReview, setUserReview] = useState({ title: '', body: '', rating: 0 });
   const [addToCartMessage, setAddToCartMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     fetch(`/product/${productId}`)
@@ -35,6 +36,11 @@ function Product() {
   }, [productId]);
 
   const handleAddToCart = (productId) => {
+    if (!isLoggedIn) {
+      alert('Please log in to add this product to your cart.');
+      history.push('/signin');
+      return;
+    }
     fetch(`/cart/products/${productId}`, {
       method: 'POST',
       headers: {
@@ -54,9 +60,23 @@ function Product() {
       });
   };
 
-  const isLoggedIn = true;
+  useEffect(() => {
+    fetch('/check_session')
+      .then((response) => {
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Error checking session:', error);
+      });
+  }, []);
+
   const handleSubmitReview = () => {
     if (!isLoggedIn) {
+      alert('Please log in to leave a review.');
       history.push('/signin');
       return;
     }

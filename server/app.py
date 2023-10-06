@@ -1,8 +1,9 @@
 from flask import Flask, make_response, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, reqparse
-from models import Product, User, Cart, Review
+from models import Product, User, Cart, Review, Order
 from config import app, db, api
+from datetime import datetime
 
 
 class Products(Resource):
@@ -235,6 +236,48 @@ class ProductReviews(Resource):
         return make_response(jsonify(review_list), 200)
 
 api.add_resource(ProductReviews, '/product/<int:product_id>/reviews')
+
+class My_Orders(Resource):
+    @check_login
+    def get(self):
+        user_id = session.get("user_id")
+        try:
+            orders = Order.query.filter_by(user_id=user_id).all()
+            orders_dict = [order.to_dict() for order in orders]
+            return make_response(jsonify(orders_dict), 200)
+        except Exception as e:
+            return make_response(jsonify({"error": str(e)}), 500)
+
+api.add_resource(My_Orders, "/my_orders")
+
+
+class Post_Order(Resource):
+    @check_login
+    def post(self):
+        user_id = session.get("user_id")
+        cart_products = Cart.query.filter_by(user_id=user_id).all()
+
+        try:
+            for cart_product in cart_products:
+                order = Order(
+                    user_id=user_id,
+                    product_id=cart_product.product_id,
+                    product_quantity=cart_product.product_quantity,
+                    order_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    order_status="Placed"
+                )
+                db.session.add(order)
+
+            Cart.query.filter_by(user_id=user_id).delete()
+            db.session.commit()
+
+            return make_response({'message': 'Order placed successfully'}, 201)
+        except Exception as e:
+            db.session.rollback()
+            return make_response({'message': 'Error occurred', 'error': str(e)}, 500)
+
+api.add_resource(Post_Order, "/post_order")
+
 
 @app.route("/signin", methods=["POST"])
 def signin():

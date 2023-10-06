@@ -7,6 +7,7 @@ import Cart from './Cart'
 import { Switch, Route } from 'react-router-dom';
 import SignUp from './SignUp';
 import Checkout from './Checkout';
+import MyOrders from './MyOrders';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/signup"><SignUp/></Route>
         <Route path="/cart"><Cart/></Route>
         <Route path="/checkout"><Checkout/></Route>
+        <Route path="/my_orders"><MyOrders/></Route>
       </Switch>
     </div>
   );

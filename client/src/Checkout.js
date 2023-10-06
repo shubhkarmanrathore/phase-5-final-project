@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 function Checkout() {
   const [userInfo, setUserInfo] = useState({
@@ -7,17 +7,15 @@ function Checkout() {
     email: '',
     address: '',
     payment_card: '',
-    // Add more fields as needed
   });
+  const [cvv, setCVV] = useState('');
+  const history = useHistory();
 
   useEffect(() => {
-    // Fetch user information from the backend and update state
-    fetch('/users') // Assuming this endpoint returns user information
+    fetch('/users')
       .then((res) => res.json())
       .then((data) => {
-        // Assuming data is an array of users
         if (data && data.length > 0) {
-          // We'll use the first user in this example
           setUserInfo(data[0]);
         }
       })
@@ -27,9 +25,35 @@ function Checkout() {
   }, []);
 
   const handleCVVInputChange = (e) => {
-    // Handle CVV input change and update state
     const newCVV = e.target.value;
-    // Update CVV in state or perform validation as needed
+    setCVV(newCVV);
+  };
+
+  const placeOrder = () => {
+    const orderData = {
+      name: userInfo.name,
+      email: userInfo.email,
+      address: userInfo.address,
+      payment_card: userInfo.payment_card,
+      cvv: cvv,
+    };
+
+    fetch('/post_order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.message === 'Order placed successfully') {
+          history.push('/my_orders');
+        }
+      })
+      .catch((error) => {
+        console.error('Error placing order:', error);
+      });
   };
 
   return (
@@ -52,12 +76,11 @@ function Checkout() {
           <label htmlFor="payment_card" className="form-label">Payment Card</label>
           <input type="text" className="form-control" id="payment_card" value={userInfo.payment_card} readOnly />
         </div>
-        {/* Add more user information fields as needed */}
         <div className="mb-3">
           <label htmlFor="cvv" className="form-label">Card CVV</label>
           <input type="text" className="form-control" id="cvv" onChange={handleCVVInputChange} />
         </div>
-        <button className="btn btn-primary">Place Order</button>
+        <button className="btn btn-primary" onClick={placeOrder}>Place Order</button>
       </form>
     </div>
   );
