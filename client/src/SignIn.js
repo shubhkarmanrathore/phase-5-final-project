@@ -41,6 +41,7 @@ function SignIn() {
         if (response.status === 200) {
           history.push('/');
         } else {
+          alert("Incorrect username or password.")
           console.error('Sign-in failed.');
         }
       })

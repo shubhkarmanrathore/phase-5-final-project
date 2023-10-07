@@ -12,19 +12,28 @@ function Checkout() {
   const history = useHistory();
 
   useEffect(() => {
-    if (!userInfo.name) {
-      fetch('/users')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.length > 0) {
-            setUserInfo(data[0]);
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching user information:', error);
-        });
-    }
-  }, [userInfo]);
+    // Check the user's session to get their user ID
+    fetch('/check_session')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.userId) {
+          // If the session contains a user ID, fetch the user's information
+          fetch(`/users/${data.userId}`)
+            .then((res) => res.json())
+            .then((userData) => {
+              if (userData) {
+                setUserInfo(userData);
+              }
+            })
+            .catch((error) => {
+              console.error('Error fetching user information:', error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error('Error checking session:', error);
+      });
+  }, []);
 
   const handleCVVInputChange = (e) => {
     const newCVV = e.target.value;
