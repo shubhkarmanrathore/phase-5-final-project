@@ -23,6 +23,8 @@ function MyOrders() {
     fetch('/my_orders')
       .then((res) => res.json())
       .then((data) => {
+        data.sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
+        
         const promises = data.map((order) => {
           return Promise.all([
             fetch(`/users/${order.user_id}`).then((res) => res.json()),
@@ -64,7 +66,7 @@ function MyOrders() {
           <table className="table mt-4">
             <thead>
               <tr>
-                <th>Order Number</th>
+                <th>Order ID</th>
                 <th>Product Name</th>
                 <th>Image</th>
                 <th>Quantity</th>
@@ -87,7 +89,7 @@ function MyOrders() {
                   </td>
                   <td>{order.product_quantity}</td>
                   <td>${order.product_price}</td>
-                  <td>{order.order_status}</td>
+                  <td>{order.order_status} on {order.order_date}</td>
                   <td>${order.product_quantity * order.product_price}</td>
                 </tr>
               ))}

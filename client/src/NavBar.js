@@ -36,7 +36,7 @@ function NavBar({ onSearch }) {
   return (
     <Navbar bg="body-tertiary" expand="lg">
       <div className="container-fluid">
-        <NavLink to="/" className="navbar-brand">Website</NavLink>
+        <NavLink to="/" className="navbar-brand">ShopSmart</NavLink>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>

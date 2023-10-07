@@ -22,11 +22,13 @@ function SignUp() {
         .required('Email is required'),
       username: Yup.string().required('Username is required'),
       password: Yup.string().required('Password is required'),
-      address: Yup.string(),
+      address: Yup.string().required('Address is required'),
       phone_number: Yup.string()
         .matches(/^\d{10}$/, 'Phone number must be 10 digits')
         .required('Phone number is required'),
-      payment_card: Yup.string(),
+      payment_card: Yup.string()
+        .matches(/^\d{16}$/, 'Payment card must be 16 digits')
+        .required('Payment card is required. Do not input your actual card no.'),
     }),
     onSubmit: (values) => {
       console.log('Form data:', values);
@@ -37,15 +39,15 @@ function SignUp() {
         },
         body: JSON.stringify(values),
       })
-      .then((response) => {
-        if (response.status === 201) {
-          alert("Signup successful. Please signin to start shopping");
-          formik.resetForm();
-        } else {
-          alert("Error occured while signing up.");
-        }
-        return response.json();
-      })
+        .then((response) => {
+          if (response.status === 201) {
+            alert('Signup successful. Please sign in to start shopping');
+            formik.resetForm();
+          } else {
+            alert('Error occurred while signing up.');
+          }
+          return response.json();
+        })
         .then((data) => {
           console.log('Registration response:', data);
         })
@@ -118,6 +120,9 @@ function SignUp() {
                     name="address"
                     {...formik.getFieldProps('address')}
                   />
+                  {formik.touched.address && formik.errors.address ? (
+                    <div className="error">{formik.errors.address}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Form.Group controlId="phone_number">
@@ -139,6 +144,9 @@ function SignUp() {
                     name="payment_card"
                     {...formik.getFieldProps('payment_card')}
                   />
+                  {formik.touched.payment_card && formik.errors.payment_card ? (
+                    <div className="error">{formik.errors.payment_card}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Button variant="primary" type="submit" className="mt-3">
@@ -146,7 +154,8 @@ function SignUp() {
                 </Button>
               </Form>
               <p className="mt-3">
-                Already have an account? <NavLink to="/signin">Sign In</NavLink>
+                Already have an account?{' '}
+                <NavLink to="/signin">Sign In</NavLink>
               </p>
             </div>
           </div>

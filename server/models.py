@@ -9,7 +9,6 @@ class User(db.Model, SerializerMixin):
     serialize_only = (
         "reviews.body",
         "reviews.rating",
-        # "order.id",
         "cart.id",
         "name",
         "address",

@@ -11,7 +11,12 @@ function CartPage() {
     fetch('/cart/user')
       .then((res) => res.json())
       .then((data) => {
-        setCartItems(data.cart_items);
+        // Set the initial quantity to 1 for each cart item
+        const cartItemsWithInitialQuantity = data.cart_items.map((item) => ({
+          ...item,
+          quantity: 1,
+        }));
+        setCartItems(cartItemsWithInitialQuantity);
         setIsLoading(false);
       });
 

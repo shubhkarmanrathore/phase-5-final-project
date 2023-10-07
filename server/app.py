@@ -109,6 +109,7 @@ class User_By_Id(Resource):
         user_data = user.to_dict()
         return make_response(jsonify(user_data), 200)
 
+    @check_login
     def delete(self, id):
         user = User.query.get(id)
         if not user:

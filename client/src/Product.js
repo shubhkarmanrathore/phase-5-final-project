@@ -9,6 +9,7 @@ function Product() {
   const [userReview, setUserReview] = useState({ title: '', body: '', rating: 0 });
   const [addToCartMessage, setAddToCartMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     fetch(`/product/${productId}`)
@@ -29,6 +30,10 @@ function Product() {
       .then((res) => res.json())
       .then((data) => {
         setReviews(data);
+
+        const totalRating = data.reduce((acc, review) => acc + review.rating, 0);
+        const avgRating = data.length > 0 ? totalRating / data.length : 0;
+        setAverageRating(avgRating);
       })
       .catch((error) => {
         console.error('Fetch error:', error);
@@ -95,6 +100,10 @@ function Product() {
             .then((res) => res.json())
             .then((data) => {
               setReviews(data);
+
+              const totalRating = data.reduce((acc, review) => acc + review.rating, 0);
+              const avgRating = data.length > 0 ? totalRating / data.length : 0;
+              setAverageRating(avgRating);
             })
             .catch((error) => {
               console.error('Fetch error:', error);
@@ -116,7 +125,7 @@ function Product() {
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-6">
-          <img src={product.image} className="img-fluid" alt={product.title} />
+          <img src={product.image} className="img-fluid img-thumbnail" alt={product.title} />
         </div>
         <div className="col-md-6">
           <h1>{product.title}</h1>
@@ -126,7 +135,9 @@ function Product() {
             Add to Cart
           </button>
           <p>{addToCartMessage}</p>
-          <h2>Leave a Review</h2>
+          <div className="row mt-5">
+            <h2>Leave a Review</h2>
+          </div>
           <div className="mb-3">
             <label htmlFor="reviewTitle" className="form-label">Title:</label>
             <input
@@ -152,33 +163,42 @@ function Product() {
           </div>
           <div className="mb-3">
             <label htmlFor="reviewRating" className="form-label">Rating (out of 5):</label>
-            <input
-              type="number"
+            <select
               id="reviewRating"
               name="rating"
               value={userReview.rating}
               onChange={(e) => setUserReview({ ...userReview, rating: e.target.value })}
               className="form-control"
-              min="1"
-              max="5"
               required
-            />
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
           </div>
           <button className="btn btn-primary" onClick={handleSubmitReview}>
             Submit Review
           </button>
-
+        </div>
+      </div>
+      <div className="row mt-5">
+        <div className="col-md-12">
           <h2>Product Reviews</h2>
-          <ul className="list-group">
-            {reviews.map((review) => (
-              <li key={review.id} className="list-group-item">
-                <h5 className="mb-0">{review.user.username}</h5>
-                <p>Title: {review.title}</p>
-                <p>Description: {review.body}</p>
-                <p>Rating: {review.rating} out of 5</p>
-              </li>
-            ))}
-          </ul>
+          <p>Overall Rating: {averageRating.toFixed(2)} out of 5</p>
+          {reviews.map((review) => (
+            <div key={review.id} className="col-md-12 mb-3">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">{review.title}</h5>
+                  <p className="card-text text-left">{review.body}</p>
+                  <p className="card-text text-left">Rating: {review.rating} out of 5</p>
+                </div>
+                <div className="card-footer">{review.user.name}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
