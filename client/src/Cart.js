@@ -82,65 +82,69 @@ function CartPage() {
     <div className="container">
       <h1 className="mt-5">Shopping Cart</h1>
       {isLoggedIn ? (
-        <>
-          <table className="table mt-4">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Image</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartItems.map((cartItem) => (
-                <tr key={cartItem.id}>
-                  <td>{cartItem.product.title}</td>
-                  <td>
-                    <img
-                      src={cartItem.product.image}
-                      alt={cartItem.product.title}
-                      style={{ width: '50px', height: '50px' }}
-                    />
-                  </td>
-                  <td>
-                    <select
-                      value={cartItem.quantity}
-                      onChange={(e) => {
-                        const newQuantity = parseInt(e.target.value, 10);
-                        updateQuantity(cartItem.id, newQuantity);
-                      }}
-                    >
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((quantity) => (
-                        <option key={quantity} value={quantity}>
-                          {quantity}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>${cartItem.product.price}</td>
-                  <td>${cartItem.quantity * cartItem.product.price}</td>
-                  <td>
-                    <button
-                      onClick={() => removeFromCart(cartItem.id)}
-                      className="btn btn-danger"
-                    >
-                      Remove
-                    </button>
-                  </td>
+        cartItems.length > 0 ? (
+          <>
+            <table className="table mt-4">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Image</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Subtotal</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <div>
-            <h3>Total: ${calculateTotal()}</h3>
-            <NavLink to="/checkout" className="btn btn-primary" activeClassName="active-link">
-              Checkout
-            </NavLink>
-          </div>
-        </>
+              </thead>
+              <tbody>
+                {cartItems.map((cartItem) => (
+                  <tr key={cartItem.id}>
+                    <td>{cartItem.product.title}</td>
+                    <td>
+                      <img
+                        src={cartItem.product.image}
+                        alt={cartItem.product.title}
+                        style={{ width: '50px', height: '50px' }}
+                      />
+                    </td>
+                    <td>
+                      <select
+                        value={cartItem.quantity}
+                        onChange={(e) => {
+                          const newQuantity = parseInt(e.target.value, 10);
+                          updateQuantity(cartItem.id, newQuantity);
+                        }}
+                      >
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map((quantity) => (
+                          <option key={quantity} value={quantity}>
+                            {quantity}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>${cartItem.product.price}</td>
+                    <td>${cartItem.quantity * cartItem.product.price}</td>
+                    <td>
+                      <button
+                        onClick={() => removeFromCart(cartItem.id)}
+                        className="btn btn-danger"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div>
+              <h3>Total: ${calculateTotal()}</h3>
+              <NavLink to="/checkout" className="btn btn-primary" activeClassName="active-link">
+                Checkout
+              </NavLink>
+            </div>
+          </>
+        ) : (
+          <p>Your cart is empty.</p>
+        )
       ) : (
         <div className="mt-4">
           <p>Please login first to start shopping.</p>

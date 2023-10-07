@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 function Checkout() {
   const [userInfo, setUserInfo] = useState({
@@ -12,21 +12,25 @@ function Checkout() {
   const history = useHistory();
 
   useEffect(() => {
-    fetch('/users')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length > 0) {
-          setUserInfo(data[0]);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching user information:', error);
-      });
-  }, []);
+    if (!userInfo.name) {
+      fetch('/users')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.length > 0) {
+            setUserInfo(data[0]);
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching user information:', error);
+        });
+    }
+  }, [userInfo]);
 
   const handleCVVInputChange = (e) => {
     const newCVV = e.target.value;
-    setCVV(newCVV);
+    if (/^\d{0,3}$/.test(newCVV)) {
+      setCVV(newCVV);
+    }
   };
 
   const placeOrder = () => {
@@ -45,43 +49,50 @@ function Checkout() {
       },
       body: JSON.stringify(orderData),
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.message === 'Order placed successfully') {
+      .then((res) => {
+        if (res.status === 201) {
+          alert('Order Placed successfully');
           history.push('/my_orders');
+        } else if (res.status === 401) {
+          alert('Error placing order');
         }
       })
       .catch((error) => {
         console.error('Error placing order:', error);
+        alert('Error placing the order');
       });
   };
 
   return (
     <div className="container">
       <h1 className="mt-5">Checkout</h1>
-      <form>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">Full Name</label>
-          <input type="text" className="form-control" id="name" value={userInfo.name} readOnly />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">Email</label>
-          <input type="email" className="form-control" id="email" value={userInfo.email} readOnly />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="address" className="form-label">Address</label>
-          <input type="text" className="form-control" id="address" value={userInfo.address} readOnly />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="payment_card" className="form-label">Payment Card</label>
-          <input type="text" className="form-control" id="payment_card" value={userInfo.payment_card} readOnly />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="cvv" className="form-label">Card CVV</label>
-          <input type="text" className="form-control" id="cvv" onChange={handleCVVInputChange} />
-        </div>
-        <button className="btn btn-primary" onClick={placeOrder}>Place Order</button>
-      </form>
+      <div>
+        <h2>User Information</h2>
+        <p>
+          <strong>Full Name:</strong> {userInfo.name}
+        </p>
+        <p>
+          <strong>Email:</strong> {userInfo.email}
+        </p>
+        <p>
+          <strong>Address:</strong> {userInfo.address}
+        </p>
+        <p>
+          <strong>Payment Card:</strong> {userInfo.payment_card}
+        </p>
+      </div>
+      <div>
+        <h2>Review Order</h2>
+      </div>
+      <div className="mb-3">
+        <label htmlFor="cvv" className="form-label">
+          Card CVV (Max 3 digits)
+        </label>
+        <input type="text" className="form-control" id="cvv" value={cvv} onChange={handleCVVInputChange} />
+      </div>
+      <button className="btn btn-primary" onClick={placeOrder}>
+        Place Order
+      </button>
     </div>
   );
 }

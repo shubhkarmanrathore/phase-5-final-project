@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-function HomePage() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    fetch('/products')
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      });
-  }, []);
-
+function HomePage({ products }) {
   return (
     <div>
       <div className="row">

@@ -1,41 +1,59 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 function SignUp() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    username: '',
-    password: '',
-    address: '',
-    phone_number: '',
-    payment_card: '',
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    fetch('/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Registration response:', data);
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      username: '',
+      password: '',
+      address: '',
+      phone_number: '',
+      payment_card: '',
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required('Name is required'),
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is required'),
+      username: Yup.string().required('Username is required'),
+      password: Yup.string().required('Password is required'),
+      address: Yup.string(),
+      phone_number: Yup.string()
+        .matches(/^\d{10}$/, 'Phone number must be 10 digits')
+        .required('Phone number is required'),
+      payment_card: Yup.string(),
+    }),
+    onSubmit: (values) => {
+      console.log('Form data:', values);
+      fetch('/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       })
-      .catch((error) => {
-        console.error('Registration error:', error);
-      });
-  };
+      .then((response) => {
+        if (response.status === 201) {
+          alert("Signup successful. Please signin to start shopping");
+          formik.resetForm();
+        } else {
+          alert("Error occured while signing up.");
+        }
+        return response.json();
+      })
+        .then((data) => {
+          console.log('Registration response:', data);
+        })
+        .catch((error) => {
+          console.error('Registration error:', error);
+        });
+    },
+  });
 
   return (
     <Container className="mt-5">
@@ -44,16 +62,17 @@ function SignUp() {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title">Sign Up</h2>
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={formik.handleSubmit}>
                 <Form.Group controlId="name">
                   <Form.Label>Name:</Form.Label>
                   <Form.Control
                     type="text"
                     name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
+                    {...formik.getFieldProps('name')}
                   />
+                  {formik.touched.name && formik.errors.name ? (
+                    <div className="error">{formik.errors.name}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Form.Group controlId="email">
@@ -61,10 +80,11 @@ function SignUp() {
                   <Form.Control
                     type="email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
+                    {...formik.getFieldProps('email')}
                   />
+                  {formik.touched.email && formik.errors.email ? (
+                    <div className="error">{formik.errors.email}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Form.Group controlId="username">
@@ -72,10 +92,11 @@ function SignUp() {
                   <Form.Control
                     type="text"
                     name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
+                    {...formik.getFieldProps('username')}
                   />
+                  {formik.touched.username && formik.errors.username ? (
+                    <div className="error">{formik.errors.username}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Form.Group controlId="password">
@@ -83,10 +104,11 @@ function SignUp() {
                   <Form.Control
                     type="password"
                     name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
+                    {...formik.getFieldProps('password')}
                   />
+                  {formik.touched.password && formik.errors.password ? (
+                    <div className="error">{formik.errors.password}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Form.Group controlId="address">
@@ -94,8 +116,7 @@ function SignUp() {
                   <Form.Control
                     type="text"
                     name="address"
-                    value={formData.address}
-                    onChange={handleChange}
+                    {...formik.getFieldProps('address')}
                   />
                 </Form.Group>
 
@@ -104,9 +125,11 @@ function SignUp() {
                   <Form.Control
                     type="text"
                     name="phone_number"
-                    value={formData.phone_number}
-                    onChange={handleChange}
+                    {...formik.getFieldProps('phone_number')}
                   />
+                  {formik.touched.phone_number && formik.errors.phone_number ? (
+                    <div className="error">{formik.errors.phone_number}</div>
+                  ) : null}
                 </Form.Group>
 
                 <Form.Group controlId="payment_card">
@@ -114,8 +137,7 @@ function SignUp() {
                   <Form.Control
                     type="text"
                     name="payment_card"
-                    value={formData.payment_card}
-                    onChange={handleChange}
+                    {...formik.getFieldProps('payment_card')}
                   />
                 </Form.Group>
 
