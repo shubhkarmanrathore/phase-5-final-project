@@ -93,8 +93,15 @@ class Users(Resource):
             return {"error": error_message}, 500
 
 api.add_resource(Users, '/users')
+def check_login(func):
+    def wrapper(*args, **kwargs):
+        if not session.get("user_id"):
+            return make_response(jsonify({"message": "Not logged in"}), 401)
+        return func(*args, **kwargs)
+    return wrapper
 
 class User_By_Id(Resource):
+    @check_login
     def get(self, id):
         user = User.query.get(id)
         if not user:
@@ -117,12 +124,6 @@ class User_By_Id(Resource):
 
 api.add_resource(User_By_Id, '/users/<int:id>')
 
-def check_login(func):
-    def wrapper(*args, **kwargs):
-        if not session.get("user_id"):
-            return make_response(jsonify({"message": "Not logged in"}), 401)
-        return func(*args, **kwargs)
-    return wrapper
 
 class Cart_Resource(Resource):
     @check_login

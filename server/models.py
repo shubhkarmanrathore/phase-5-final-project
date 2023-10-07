@@ -30,6 +30,12 @@ class User(db.Model, SerializerMixin):
     orders = db.relationship("Order", back_populates="user")
     cart = db.relationship("Cart", back_populates="user")
 
+    @validates('phone_number')
+    def validate_phone_number(self, key, phone_number):
+        if len(phone_number) != 10:
+            raise ValueError("Phone number must be exactly 10 digits long")
+        return phone_number
+
     serialize_rules = (
     "-reviews.user",
     "-orders.user",
