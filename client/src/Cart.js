@@ -8,28 +8,35 @@ function CartPage() {
   const history = useHistory();
 
   useEffect(() => {
-    fetch('/cart/user')
-      .then((res) => res.json())
-      .then((data) => {
-        // Set the initial quantity to 1 for each cart item
-        const cartItemsWithInitialQuantity = data.cart_items.map((item) => ({
-          ...item,
-          quantity: 1,
-        }));
-        setCartItems(cartItemsWithInitialQuantity);
-        setIsLoading(false);
-      });
-
     fetch('/check_session')
       .then((response) => {
         if (response.status === 200) {
           setIsLoggedIn(true);
+
+          // If the user is logged in, fetch the cart items
+          fetch('/cart/user')
+            .then((res) => res.json())
+            .then((data) => {
+              // Set the initial quantity to 1 for each cart item
+              const cartItemsWithInitialQuantity = data.cart_items.map((item) => ({
+                ...item,
+                quantity: 1,
+              }));
+              setCartItems(cartItemsWithInitialQuantity);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error('Error fetching cart items:', error);
+              setIsLoading(false);
+            });
         } else {
           setIsLoggedIn(false);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         console.error('Error checking session:', error);
+        setIsLoading(false);
       });
   }, []);
 
@@ -86,7 +93,9 @@ function CartPage() {
   return (
     <div className="container">
       <h1 className="mt-5">Shopping Cart</h1>
-      {isLoggedIn ? (
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : isLoggedIn ? (
         cartItems.length > 0 ? (
           <>
             <table className="table mt-4">
