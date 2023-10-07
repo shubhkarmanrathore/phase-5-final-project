@@ -13,11 +13,9 @@ function CartPage() {
         if (response.status === 200) {
           setIsLoggedIn(true);
 
-          // If the user is logged in, fetch the cart items
           fetch('/cart/user')
             .then((res) => res.json())
             .then((data) => {
-              // Set the initial quantity to 1 for each cart item
               const cartItemsWithInitialQuantity = data.cart_items.map((item) => ({
                 ...item,
                 quantity: 1,
