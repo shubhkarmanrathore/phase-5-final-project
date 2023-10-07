@@ -3,10 +3,10 @@ import { NavLink } from 'react-router-dom';
 
 function HomePage({ products }) {
   return (
-    <div>
-      <div className="row">
+    <div className="container mt-4">
+      <div className="row row-cols-1 row-cols-md-4 g-4">
         {products.map((product) => (
-          <div key={product.id} className="col-md-3 mb-4">
+          <div key={product.id} className="col">
             <div className="card h-100">
               <img
                 src={product.image}
@@ -16,7 +16,12 @@ function HomePage({ products }) {
               <div className="card-body">
                 <h5 className="card-title">{product.title}</h5>
                 <p className="card-text">Price: ${product.price}</p>
-                <NavLink to={`/product/${product.id}`} className="btn btn-primary">
+              </div>
+              <div className="card-footer">
+                <NavLink
+                  to={`/product/${product.id}`}
+                  className="btn btn-primary"
+                >
                   View Product
                 </NavLink>
               </div>
