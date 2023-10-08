@@ -146,12 +146,12 @@ function Checkout() {
         <div className="col-md-6">
           <div className="card">
             <div className="card-body">
-              <h1 className="card-title">Your Cart</h1>
+              <h1 className="card-title">Review your order</h1>
               <ul className="list-group">
                 {cartItems.map((item) => (
                   <li className="list-group-item" key={item.id}>
                     <strong>{item.product.title}</strong>
-                    <p>Quantity: {item.quantity}</p>
+                    {/* <p>Quantity: {item.quantity}</p> */}
                     <p>Price: ${item.product.price}</p>
                   </li>
                 ))}

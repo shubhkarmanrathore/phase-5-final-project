@@ -31,7 +31,6 @@ function SignUp() {
         .required('Payment card is required. Do not input your actual card no.'),
     }),
     onSubmit: (values) => {
-      console.log('Form data:', values);
       fetch('/users', {
         method: 'POST',
         headers: {

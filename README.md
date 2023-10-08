@@ -34,7 +34,7 @@ ShopSmart is your one-stop online shopping destination. Explore a vast selection
 10. Now you can use the application in your browser.
 
 ## Walkthrough video
-Watch the full walkthrough video here: 
+Watch the full walkthrough video here: https://www.loom.com/share/b192ab21f7e440d5a8aa077aa73923b1?sid=b873b0ab-5dfb-438d-8e7e-793ec0c23fc5
 
 ## Acknowledgments
 This project was created as a learning exercise, and it would not have been possible without the resources and support of the following:
