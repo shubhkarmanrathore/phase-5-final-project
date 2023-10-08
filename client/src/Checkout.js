@@ -108,9 +108,9 @@ function Checkout() {
                 <p>
                   <strong>Full Name:</strong> {userInfo.name}
                 </p>
-                <p>
+                {/* <p>
                   <strong>Email:</strong> {userInfo.email}
-                </p>
+                </p> */}
                 <p>
                   <strong>Address:</strong> {userInfo.address}
                 </p>
