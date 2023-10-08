@@ -13,7 +13,6 @@ function Checkout() {
   const history = useHistory();
 
   useEffect(() => {
-    // Fetch user information
     fetch('/check_session')
       .then((response) => {
         if (response.status === 200) {
@@ -41,11 +40,9 @@ function Checkout() {
         history.push('/signin');
       });
 
-    // Fetch cart items
     fetch('/cart/user')
       .then((res) => res.json())
       .then((data) => {
-        // Set the cart items fetched from the server
         setCartItems(data.cart_items);
       })
       .catch((error) => {
@@ -60,7 +57,6 @@ function Checkout() {
     }
   };
 
-  // Function to format the payment card number
   const formatPaymentCard = (cardNumber) => {
     if (cardNumber.length < 4) {
       return '**** **** **** ' + cardNumber;

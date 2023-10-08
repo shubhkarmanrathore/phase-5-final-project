@@ -10,7 +10,6 @@ function SignIn() {
   const history = useHistory();
 
   useEffect(() => {
-    // Check if the user is already logged in
     fetch('/check_session')
       .then((response) => {
         if (response.status === 200) {

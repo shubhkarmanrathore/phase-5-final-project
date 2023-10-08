@@ -116,13 +116,18 @@ class User_By_Id(Resource):
             return make_response({'message': 'User not found'}, 404)
 
         try:
+            Order.query.filter_by(user_id=id).delete()
+            
+            Cart.query.filter_by(user_id=id).delete()
+            Review.query.filter_by(user_id=id).delete()
+            
             db.session.delete(user)
             db.session.commit()
+            
             return make_response({'message': 'User deleted successfully'}, 200)
         except Exception as e:
             db.session.rollback()
             return make_response({'message': 'Error occurred', 'error': str(e)}, 500)
-
 api.add_resource(User_By_Id, '/users/<int:id>')
 
 
