@@ -10,6 +10,7 @@ function NavBar({ onSearch, onDeleteAccount }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [userId, setUserId] = useState(null);
+  
   useEffect(() => {
     fetch('/check_session')
       .then((response) => {
