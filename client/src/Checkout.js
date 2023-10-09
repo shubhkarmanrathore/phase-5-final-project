@@ -108,9 +108,6 @@ function Checkout() {
                 <p>
                   <strong>Full Name:</strong> {userInfo.name}
                 </p>
-                {/* <p>
-                  <strong>Email:</strong> {userInfo.email}
-                </p> */}
                 <p>
                   <strong>Address:</strong> {userInfo.address}
                 </p>
@@ -151,7 +148,6 @@ function Checkout() {
                 {cartItems.map((item) => (
                   <li className="list-group-item" key={item.id}>
                     <strong>{item.product.title}</strong>
-                    {/* <p>Quantity: {item.quantity}</p> */}
                     <p>Price: ${item.product.price}</p>
                   </li>
                 ))}
